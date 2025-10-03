@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  @apply bg-slate-900 text-slate-100 antialiased;
+}
+
+.highlight-add {
+  @apply bg-emerald-500/20 text-emerald-200;
+}
+
+.highlight-remove {
+  @apply bg-rose-500/20 text-rose-200 line-through;
+}
