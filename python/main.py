@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -16,6 +17,10 @@ from app.exporter.documents import export_documents
 cli = typer.Typer(help="Local AI toolbox for CV adaptation")
 
 
+def debug(message: str) -> None:
+    print(f"[python] {message}", file=sys.stderr, flush=True)
+
+
 def read_payload(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -28,6 +33,7 @@ def output(data: Any) -> None:
 def import_cv(input: Path) -> None:  # type: ignore[override]
     payload = read_payload(input)
     file_path = Path(payload["file_path"]).expanduser()
+    debug(f"import_cv payload keys={list(payload.keys())} path={file_path}")
     try:
         raw_text, warnings = extract_text(file_path)
     except ExtractionError as error:
@@ -36,6 +42,7 @@ def import_cv(input: Path) -> None:  # type: ignore[override]
 
     profile = parse_candidate_profile(raw_text)
     result = ExtractionPayload(profile=profile, raw_text=raw_text, warnings=warnings)
+    debug(f"import_cv success warnings={warnings}")
     output(result.to_dict())
 
 

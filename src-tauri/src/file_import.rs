@@ -13,6 +13,7 @@ pub async fn import_cv(
     state: State<'_, SharedState>,
     app: AppHandle,
 ) -> Result<ExtractionPayload, String> {
+    println!("[file_import] import_cv called with {file_path}");
     let payload = json!({ "file_path": file_path });
     let result: ExtractionPayload = call_python(&app, "import_cv", payload)
         .await

@@ -5,12 +5,7 @@ use crate::{
     models::{AdaptationResult, JobOffer},
     python_bridge::call_python,
     state::{
-        get_adaptation,
-        store_adaptation,
-        store_offer,
-        try_get_offer,
-        try_get_profile,
-        SharedState,
+        get_adaptation, store_adaptation, store_offer, try_get_offer, try_get_profile, SharedState,
     },
 };
 
@@ -42,8 +37,8 @@ pub async fn adapt_documents(
 
     let profile = try_get_profile(&state, &profile_id)
         .ok_or_else(|| format!("Profil {profile_id} introuvable"))?;
-    let offer = try_get_offer(&state, &offer_id)
-        .ok_or_else(|| format!("Offre {offer_id} introuvable"))?;
+    let offer =
+        try_get_offer(&state, &offer_id).ok_or_else(|| format!("Offre {offer_id} introuvable"))?;
 
     let payload = json!({ "profile": profile, "offer": offer });
     let result: AdaptationResult = call_python(&app, "adapt_documents", payload)

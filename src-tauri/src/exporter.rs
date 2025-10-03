@@ -14,8 +14,8 @@ pub async fn export_documents(
     state: State<'_, SharedState>,
     app: AppHandle,
 ) -> Result<ExportPayload, String> {
-    let profile: CandidateProfile = try_get_profile(&state, &profile_id)
-        .ok_or_else(|| "Profil introuvable".to_string())?;
+    let profile: CandidateProfile =
+        try_get_profile(&state, &profile_id).ok_or_else(|| "Profil introuvable".to_string())?;
     let adaptation: AdaptationResult = get_adaptation(&state, &profile_id)
         .ok_or_else(|| "Aucune adaptation disponible pour export".to_string())?;
 

@@ -44,6 +44,7 @@ CVGen est un prototype d'application desktop multiplateforme (macOS, Windows, Li
    pip install -r python/requirements.txt
    ```
    > ℹ️ Le support des anciens fichiers `.doc` repose sur `textract`, non installé par défaut pour éviter des conflits de dépendances. Si nécessaire, installez-le manuellement (`pip install textract==1.6.5 pdfminer.six==20191110`) ou convertissez vos fichiers en `.docx`.
+   > ℹ️ La pipeline NLP est épinglée sur `sentence-transformers==2.2.2`/`transformers==4.33.3` pour rester compatible Python 3.9. Le premier import peut déclencher la migration du cache `huggingface_hub` — laissez l'opération s'achever (quelques minutes max).
 
 3. **(Optionnel) Pré-télécharger le modèle d'embedding pour un usage totalement hors-ligne**
    ```bash
@@ -70,7 +71,7 @@ make tauri-build  # build des binaires desktop
 make clean        # nettoyage complet (node_modules, .venv, dist, target)
 ```
 
-Le backend Rust utilisera la variable d'environnement `PYTHON_CMD` si elle est définie (permet de cibler un interpréteur précis). Sinon, `python3` est utilisé par défaut.
+Le backend Rust détecte automatiquement `.venv/bin/python` (ou `.venv/Scripts/python.exe`) s'il est présent. Vous pouvez forcer un interpréteur spécifique via la variable d'environnement `PYTHON_CMD`; en dernier recours, `python3` (ou `python.exe` sous Windows) est utilisé.
 
 ## Utilisation
 

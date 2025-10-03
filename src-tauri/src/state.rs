@@ -62,7 +62,11 @@ pub fn store_offer(state: &State<SharedState>, offer: JobOffer) {
     guard.offers.insert(offer.id.clone(), offer);
 }
 
-pub fn store_adaptation(state: &State<SharedState>, profile_id: &str, adaptation: AdaptationResult) {
+pub fn store_adaptation(
+    state: &State<SharedState>,
+    profile_id: &str,
+    adaptation: AdaptationResult,
+) {
     let mut guard = state.0.lock();
     guard.adaptations.insert(profile_id.to_string(), adaptation);
 }
