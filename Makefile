@@ -49,6 +49,7 @@ node_modules: package.json
 
 dev: install
 	@echo "Starting Tauri dev server..."
+	@npx --yes kill-port 1420 >/dev/null 2>&1 || true
 	npm run tauri:dev
 
 lint:

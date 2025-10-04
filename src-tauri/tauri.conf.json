@@ -38,7 +38,7 @@
       "active": true,
       "targets": "all",
       "identifier": "com.cvgen.desktop",
-      "resources": ["../python"]
+  "resources": ["../python", "../templates"]
     }
   }
 }

@@ -9,6 +9,7 @@ CVGen est un prototype d'application desktop multiplateforme (macOS, Windows, Li
 - Collage ou import d'une offre d'emploi et analyse locale des mots-clés.
 - Adaptation automatique du CV et de la lettre de motivation avec surlignage des ajouts/modifications.
 - Interface React en deux panneaux : offre à gauche, documents adaptés à droite.
+- Sélection d'un modèle de CV via une galerie dédiée (templates contrôlés).
 - Export local en PDF et Word (docx) via Python.
 - Stockage interne du profil et des offres dans un fichier JSON local.
 
@@ -86,16 +87,19 @@ Le backend Rust détecte automatiquement `.venv/bin/python` (ou `.venv/Scripts/p
 cvgen/
 ├── src/                         # Frontend React
 │   ├── App.tsx                  # Interface principale deux panneaux
-│   ├── components/              # Composants UI réutilisables
+│   ├── components/              # Composants UI réutilisables (galerie de templates, dropzone, etc.)
 │   ├── hooks/useCvStore.ts      # État global (Zustand)
 │   ├── lib/api.ts               # Ponts vers les commandes Tauri
 │   └── types/                   # Types partagés
+├── templates/                   # Manifestes de modèles + aperçus SVG
+├── docs/cv-template-spec.md     # Spécification détaillée du système de templates
 ├── src-tauri/                   # Backend Rust (Tauri)
 │   ├── src/
 │   │   ├── file_import.rs       # Import & extraction via Python
 │   │   ├── ai_engine.rs         # Analyse offre & adaptation
 │   │   ├── exporter.rs          # Exports PDF/DOCX
 │   │   ├── python_bridge.rs     # Exécution des scripts Python
+│   │   ├── templates.rs         # Commande list_templates exposée au frontend
 │   │   ├── state.rs             # Stockage local en mémoire
 │   │   └── models.rs            # Structures partagées (serde)
 │   └── tauri.conf.json          # Configuration Tauri

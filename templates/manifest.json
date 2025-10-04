@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "id": "modern",
+      "name": "Modern Clean",
+      "description": "Two-column layout with accent color blocks and emphasis on highlights.",
+      "previewImage": "previews/modern.svg",
+      "styleTokens": {
+        "primaryColor": "#2563eb",
+        "accentColor": "#f97316",
+        "fontFamily": "Inter, 'Segoe UI', sans-serif"
+      },
+      "sections": {
+        "header": {
+          "required": ["fullName"],
+          "optional": ["email", "phone", "summary"]
+        },
+        "experience": {
+          "maxItems": 6,
+          "layout": "two-column"
+        },
+        "skills": {
+          "grouping": "category",
+          "display": "pill"
+        },
+        "education": {
+          "maxItems": 3,
+          "layout": "compact"
+        }
+      }
+    },
+    {
+      "id": "classic",
+      "name": "Classic Professional",
+      "description": "Single-column layout with subtle dividers and traditional typography.",
+      "previewImage": "previews/classic.svg",
+      "styleTokens": {
+        "primaryColor": "#1f2937",
+        "accentColor": "#9ca3af",
+        "fontFamily": "'Source Serif 4', Georgia, serif"
+      },
+      "sections": {
+        "header": {
+          "required": ["fullName", "email"],
+          "optional": ["phone", "location"]
+        },
+        "experience": {
+          "maxItems": 8,
+          "layout": "single-column"
+        },
+        "skills": {
+          "grouping": "list",
+          "display": "bullet"
+        },
+        "education": {
+          "maxItems": 4,
+          "layout": "detailed"
+        }
+      }
+    }
+  ]
+}

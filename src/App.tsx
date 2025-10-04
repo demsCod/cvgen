@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Panel } from './components/Panel';
 import { FileDropzone } from './components/FileDropzone';
 import { HighlightText } from './components/HighlightText';
+import { TemplateGallery } from './components/TemplateGallery';
 import { useCvStore } from './hooks/useCvStore';
 import { importCv, analyzeOffer, adaptDocuments, exportDocuments } from './lib/api';
 import type { AdaptationResult, ExtractionPayload, ExportPayload, JobOffer } from './types';
@@ -219,9 +220,16 @@ export default function App() {
           className="w-1/2"
         >
           <div className="space-y-6">
+            <TemplateGallery
+              selectedTemplateId={store.selectedTemplateId}
+              onSelect={(templateId) => store.setSelectedTemplate(templateId)}
+            />
+
             <FileDropzone
               accept={['.pdf', '.docx', '.doc', '.png', '.jpg', '.jpeg']}
-              onFileSelected={(path) => importMutation.mutateAsync(path)}
+              onFileSelected={async (path) => {
+                await importMutation.mutateAsync(path);
+              }}
             />
 
             {store.profile && (
