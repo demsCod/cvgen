@@ -1,3 +1,5 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -19,6 +21,10 @@ module.exports = {
           800: "#122fb4",
           900: "#111f73"
         }
+      },
+      fontFamily: {
+        serif: ["\"Roboto Serif\"", ...defaultTheme.fontFamily.serif],
+        signature: ["\"MonteCarlo\"", "cursive"]
       }
     }
   },

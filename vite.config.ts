@@ -1,8 +1,23 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
+const extraWatchPaths = [
+  "src-tauri/src",
+  "python"
+];
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    {
+      name: "cvgen-extra-watch",
+      configureServer(server) {
+        for (const path of extraWatchPaths) {
+          server.watcher.add(path);
+        }
+      }
+    }
+  ],
   server: {
     port: 1420,
     strictPort: true,

@@ -7,7 +7,7 @@ interface HighlightTextProps {
 
 export function HighlightText({ text, highlights = [] }: HighlightTextProps) {
   if (!highlights.length) {
-    return <p className="whitespace-pre-wrap leading-relaxed text-slate-200">{text}</p>;
+    return <p className="whitespace-pre-wrap leading-relaxed text-slate-700">{text}</p>;
   }
 
   const sorted = [...highlights].sort((a, b) => a.start - b.start);
@@ -46,7 +46,7 @@ export function HighlightText({ text, highlights = [] }: HighlightTextProps) {
   }
 
   return (
-    <p className="whitespace-pre-wrap leading-relaxed text-slate-200">
+    <p className="whitespace-pre-wrap leading-relaxed text-slate-700">
       {output.map((segment) => (
         <span key={segment.key} className={segment.className}>
           {segment.value}

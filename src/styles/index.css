@@ -1,19 +1,45 @@
+@import url("https://fonts.googleapis.com/css2?family=Anton&family=Cardo:wght@400;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
+  /* Design Tokens */
+  --color-bg: 242 242 242;
+  --color-bg-alt: 255 255 255;
+  --color-border: 221 226 235;
+  --color-ring: 59 130 246;
+  --color-text: 30 41 59;
+  --color-muted: 100 116 139;
+  --color-accent: 99 102 241;
+  --color-accent-foreground: 255 255 255;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.06);
+  --shadow-md: 0 2px 6px -1px rgb(0 0 0 / 0.08), 0 1px 3px 0 rgb(0 0 0 / 0.04);
+  --shadow-lg: 0 8px 24px -6px rgb(15 23 42 / 0.1), 0 4px 12px -2px rgb(15 23 42 / 0.06);
 }
 
 body {
-  @apply bg-white text-slate-900 antialiased;
+  @apply text-slate-900 antialiased;
+  font-family: "Cardo", serif;
+  background: rgb(var(--color-bg));
 }
 
+/* Headings use Anton for a strong modern display look */
+h1,h2,h3,h4,h5,h6,.font-display { font-family: "Anton", sans-serif; letter-spacing: 0.5px; }
+
+/* Optional utility classes */
+.heading-tight { letter-spacing: 0.25px; }
+.subtitle { font-family: "Cardo", serif; }
+
 .highlight-add {
-  @apply bg-emerald-500/20 text-emerald-200;
+  @apply bg-emerald-100 text-emerald-700;
 }
 
 .highlight-remove {
-  @apply bg-rose-500/20 text-rose-200 line-through;
+  @apply bg-rose-100 text-rose-700 line-through;
 }

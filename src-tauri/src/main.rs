@@ -6,7 +6,6 @@ mod file_import;
 mod models;
 mod python_bridge;
 mod state;
-mod templates;
 
 use std::fs;
 
@@ -15,12 +14,18 @@ use exporter::export_documents;
 use file_import::{import_cv, register_offer};
 use parking_lot::Mutex;
 use state::{AppMemory, PersistedData, SharedState};
-use tauri::{AppHandle, Manager, RunEvent};
+use tauri::{App, AppHandle, Manager, RunEvent};
 
 fn main() {
     let app = tauri::Builder::default()
         .manage(SharedState(Mutex::new(AppMemory::default())))
         .setup(|app| {
+            #[cfg(debug_assertions)]
+            {
+                if let Err(error) = init_dev_autoreload(app) {
+                    eprintln!("Impossible d'initialiser l'autoreload: {error:?}");
+                }
+            }
             if let Err(error) = load_state(&app.handle()) {
                 eprintln!("Impossible de charger l'état: {error:?}");
             }
@@ -31,8 +36,7 @@ fn main() {
             register_offer,
             analyze_offer,
             adapt_documents,
-            export_documents,
-            templates::list_templates
+            export_documents
         ])
         .build(tauri::generate_context!())
         .expect("Échec de l'initialisation Tauri");
@@ -44,6 +48,89 @@ fn main() {
             }
         }
     });
+}
+
+#[cfg(debug_assertions)]
+fn init_dev_autoreload(app: &App) -> anyhow::Result<()> {
+    use notify::{Config, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
+    use std::path::PathBuf;
+    use std::sync::mpsc::channel;
+    use std::time::{Duration, Instant};
+
+    let app_handle = app.handle();
+    let workspace_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .map(|path| path.to_path_buf())
+        .unwrap_or_else(|| PathBuf::from(".."));
+
+    let watch_paths: Vec<PathBuf> = [
+    workspace_dir.join("src"),
+    workspace_dir.join("src-tauri").join("src"),
+    workspace_dir.join("python"),
+    ]
+    .into_iter()
+    .collect();
+
+    let (startup_tx, startup_rx) = std::sync::mpsc::channel::<anyhow::Result<()>>();
+
+    std::thread::spawn(move || {
+        let (event_tx, event_rx) = channel();
+
+        let mut watcher = match RecommendedWatcher::new(
+            event_tx,
+            Config::default().with_poll_interval(Duration::from_millis(300)),
+        ) {
+            Ok(watcher) => watcher,
+            Err(error) => {
+                let _ = startup_tx.send(Err(anyhow::Error::new(error)));
+                return;
+            }
+        };
+
+        for path in watch_paths {
+            if path.exists() {
+                if let Err(error) = watcher.watch(&path, RecursiveMode::Recursive) {
+                    eprintln!(
+                        "Watcher: impossible de suivre {}: {error:?}",
+                        path.display()
+                    );
+                }
+            }
+        }
+
+        let _ = startup_tx.send(Ok(()));
+
+        let mut last_reload = Instant::now();
+
+        loop {
+            match event_rx.recv() {
+                Ok(Ok(event)) => {
+                    if matches!(
+                        event.kind,
+                        EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_)
+                    ) {
+                        if last_reload.elapsed() < Duration::from_millis(250) {
+                            continue;
+                        }
+                        last_reload = Instant::now();
+                        if let Some(window) = app_handle.get_window("main") {
+                            if let Err(error) = window.eval("window.location.reload()") {
+                                eprintln!("Watcher: rechargement échoué: {error:?}");
+                            }
+                        }
+                    }
+                }
+                Ok(Err(error)) => {
+                    eprintln!("Watcher: événement invalide: {error:?}");
+                }
+                Err(_) => break,
+            }
+        }
+    });
+
+    startup_rx
+        .recv()
+        .unwrap_or_else(|_| Err(anyhow::anyhow!("Watcher thread non démarré")))
 }
 
 fn load_state(app_handle: &AppHandle) -> anyhow::Result<()> {

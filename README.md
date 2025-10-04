@@ -9,7 +9,6 @@ CVGen est un prototype d'application desktop multiplateforme (macOS, Windows, Li
 - Collage ou import d'une offre d'emploi et analyse locale des mots-clés.
 - Adaptation automatique du CV et de la lettre de motivation avec surlignage des ajouts/modifications.
 - Interface React en deux panneaux : offre à gauche, documents adaptés à droite.
-- Sélection d'un modèle de CV via une galerie dédiée (templates contrôlés).
 - Export local en PDF et Word (docx) via Python.
 - Stockage interne du profil et des offres dans un fichier JSON local.
 
@@ -57,6 +56,13 @@ CVGen est un prototype d'application desktop multiplateforme (macOS, Windows, Li
    ```bash
    npm run tauri:dev
    ```
+   Ce mode reste actif tant que la commande tourne : la fenêtre Tauri se recharge automatiquement dès que vous modifiez les sources React (`src`), le backend Rust (`src-tauri/src`) ou la pipeline Python (`python/`). Plus besoin de reconstruire manuellement entre deux itérations.
+
+   Pour ne travailler que sur le frontend, vous pouvez lancer Vite seul :
+   ```bash
+   npm run dev
+   ```
+   Le serveur Vite surveille également `src-tauri/src` et `python/` et force un rechargement complet du navigateur dès qu'un de ces répertoires change.
 
 ### Raccourcis make (optionnel)
 
@@ -87,19 +93,17 @@ Le backend Rust détecte automatiquement `.venv/bin/python` (ou `.venv/Scripts/p
 cvgen/
 ├── src/                         # Frontend React
 │   ├── App.tsx                  # Interface principale deux panneaux
-│   ├── components/              # Composants UI réutilisables (galerie de templates, dropzone, etc.)
+│   ├── components/              # Composants UI réutilisables (dropzone, panneaux, highlights, etc.)
 │   ├── hooks/useCvStore.ts      # État global (Zustand)
 │   ├── lib/api.ts               # Ponts vers les commandes Tauri
 │   └── types/                   # Types partagés
-├── templates/                   # Manifestes de modèles + aperçus SVG
-├── docs/cv-template-spec.md     # Spécification détaillée du système de templates
+├── templates/                   # Manifestes (désactivés) conservés pour référence
 ├── src-tauri/                   # Backend Rust (Tauri)
 │   ├── src/
 │   │   ├── file_import.rs       # Import & extraction via Python
 │   │   ├── ai_engine.rs         # Analyse offre & adaptation
 │   │   ├── exporter.rs          # Exports PDF/DOCX
 │   │   ├── python_bridge.rs     # Exécution des scripts Python
-│   │   ├── templates.rs         # Commande list_templates exposée au frontend
 │   │   ├── state.rs             # Stockage local en mémoire
 │   │   └── models.rs            # Structures partagées (serde)
 │   └── tauri.conf.json          # Configuration Tauri

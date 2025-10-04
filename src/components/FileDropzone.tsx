@@ -37,8 +37,8 @@ export function FileDropzone({ accept, onFileSelected }: FileDropzoneProps) {
   return (
     <div
       className={clsx(
-        'flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-slate-700 bg-slate-800/60 px-6 py-10 text-center transition-colors',
-        isHovering && 'border-emerald-400 bg-slate-800/90',
+        'flex flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-6 py-10 text-center transition-colors',
+        isHovering && 'border-emerald-400 bg-emerald-50',
       )}
   onDragOver={(event: DragEvent<HTMLDivElement>) => {
         event.preventDefault();
@@ -66,12 +66,12 @@ export function FileDropzone({ accept, onFileSelected }: FileDropzoneProps) {
         }
       }}
     >
-      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-900/80 ring-1 ring-slate-700">
-        {busy ? <Loader2 className="h-6 w-6 animate-spin text-emerald-400" /> : <FileUp className="h-6 w-6 text-emerald-400" />}
+      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 ring-1 ring-emerald-200">
+        {busy ? <Loader2 className="h-6 w-6 animate-spin text-emerald-500" /> : <FileUp className="h-6 w-6 text-emerald-500" />}
       </div>
       <div className="space-y-1">
         <p className="text-lg font-semibold">Déposez votre CV</p>
-        <p className="text-sm text-slate-400">Formats acceptés : PDF, Word, PNG, JPG</p>
+        <p className="text-sm text-slate-500">Formats acceptés : PDF, Word, PNG, JPG</p>
       </div>
       <button
         type="button"
@@ -81,7 +81,7 @@ export function FileDropzone({ accept, onFileSelected }: FileDropzoneProps) {
       >
         {busy ? 'Import en cours…' : 'Choisir un fichier'}
       </button>
-      {error && <p className="text-sm text-rose-300">{error}</p>}
+      {error && <p className="text-sm text-rose-600">{error}</p>}
     </div>
   );
 }

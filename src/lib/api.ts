@@ -1,7 +1,5 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { AdaptationResult, ExtractionPayload, ExportPayload, JobOffer } from '../types';
-import { TemplateManifest } from '../templates/types';
-import { loadFallbackManifest } from '../templates/loadFallbackManifest';
 
 async function callBackend<T>(command: string, args: Record<string, unknown>): Promise<T> {
   try {
@@ -20,10 +18,6 @@ async function callBackend<T>(command: string, args: Record<string, unknown>): P
   }
 }
 
-function isTauriEnvironment() {
-  return typeof window !== 'undefined' && '__TAURI_IPC__' in window;
-}
-
 export function importCv(filePath: string): Promise<ExtractionPayload> {
   return callBackend<ExtractionPayload>('import_cv', { filePath });
 }
@@ -38,11 +32,4 @@ export function adaptDocuments(profileId: string, offerId: string): Promise<Adap
 
 export function exportDocuments(profileId: string, format: 'pdf' | 'docx'): Promise<ExportPayload> {
   return callBackend<ExportPayload>('export_documents', { profileId, format });
-}
-
-export async function listTemplates(): Promise<TemplateManifest> {
-  if (!isTauriEnvironment()) {
-    return loadFallbackManifest();
-  }
-  return callBackend<TemplateManifest>('list_templates', {});
 }
