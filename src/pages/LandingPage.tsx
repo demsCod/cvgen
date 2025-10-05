@@ -2,7 +2,10 @@ import React from 'react';
 import { Button } from '../components/ui/Button';
 import { Card, CardHeader, CardSection } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+// DitheringShader retiré
+
+
 
 const features = [
   { title: 'Import intelligent', description: 'Extrait automatiquement le texte de votre CV existant (PDF / DOCX).' },
@@ -12,6 +15,11 @@ const features = [
 ];
 
 export default function LandingPage(){
+  const location = useLocation();
+  const navigate = useNavigate();
+  const openAuth = (path: '/login' | '/signup') => {
+    navigate(path, { state: { backgroundLocation: location } });
+  };
   return (
     <div className="relative">
       {/* Header local spécifique à la landing (on n'utilise pas position: absolute pour qu'il reste visible) */}
@@ -22,24 +30,29 @@ export default function LandingPage(){
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <NavLink to="/" className="text-xl font-semibold tracking-tight text-slate-900 font-display">CVGen</NavLink>
           <div className="flex items-center gap-3">
-            <NavLink to="/login">
-              <Button variant="primary">Login / Signup</Button>
-            </NavLink>
+            <Button variant="primary" onClick={()=>openAuth('/login')}>Login / Signup</Button>
           </div>
         </div>
       </header>
 
       {/* Hero */}
-      <section className="mx-auto max-w-3xl px-6 pt-14 text-center sm:pt-20">
-        <h1 className="font-display text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
-          Optimisez votre CV avec l’IA
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-lg text-slate-600">
-          CVGen analyse une offre, détecte les écarts et vous aide à adapter votre CV pour maximiser vos chances.
-        </p>
-        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-          <NavLink to="/dashboard"><Button variant="primary">Commencer</Button></NavLink>
-          <NavLink to="/login"><Button variant="ghost">Se connecter</Button></NavLink>
+      <section className="relative w-full pt-14 sm:pt-20">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <h1 className="font-display text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+            Optimisez votre CV avec l’IA
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-lg text-slate-600">
+            CVGen analyse une offre, détecte les écarts et vous aide à adapter votre CV pour maximiser vos chances.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+            <NavLink to="/dashboard"><Button variant="primary">Commencer</Button></NavLink>
+            <Button variant="ghost" onClick={()=>openAuth('/login')}>Se connecter</Button>
+          </div>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            <Badge>Analyse sémantique</Badge>
+            <Badge>Extraction OCR</Badge>
+            <Badge>Adaptation ciblée</Badge>
+          </div>
         </div>
       </section>
 

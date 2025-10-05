@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import path from "path";
 
 const extraWatchPaths = [
   "src-tauri/src",
@@ -18,6 +19,11 @@ export default defineConfig({
       }
     }
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src")
+    }
+  },
   server: {
     port: 1420,
     strictPort: true,
