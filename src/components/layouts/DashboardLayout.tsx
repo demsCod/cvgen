@@ -11,7 +11,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ activeMenu, children,
   return (
     <div className={className}> 
       <Navbar activeMenu={activeMenu} />
-      <main className="container mx-auto p-4 pb-4">
+      <main className="container w-full p-4 pb-4">
         {children}
       </main>
     </div>

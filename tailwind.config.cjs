@@ -23,8 +23,9 @@ module.exports = {
         }
       },
       fontFamily: {
-        serif: ["\"Roboto Serif\"", ...defaultTheme.fontFamily.serif],
-        signature: ["\"MonteCarlo\"", "cursive"]
+        sans: ["Inter", "system-ui", ...defaultTheme.fontFamily.sans],
+        heading: ["Poppins", "system-ui", ...defaultTheme.fontFamily.sans],
+        body: ["Inter", "system-ui", ...defaultTheme.fontFamily.sans]
       }
     }
   },

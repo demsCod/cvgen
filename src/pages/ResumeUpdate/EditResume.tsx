@@ -9,8 +9,12 @@ import EducationStep from '@/components/resume/steps/EducationStep';
 import SkillsStep from '@/components/resume/steps/SkillsStep';
 import ProjectsStep from '@/components/resume/steps/ProjectsStep';
 import LanguagesStep from '@/components/resume/steps/LanguagesStep';
+import FormSection from '@/components/resume/FormSection';
+import ChatAssistant from '@/components/chat/ChatAssistant';
+import TemplateOne from '@/components/ResumeTemplates/TemplateOne';
 import { FiEdit2, FiSave, FiTrash2, FiLayout } from 'react-icons/fi';
 import { useCvFiles } from '@/hooks/useCvFiles';
+import { mapProfileToResumeData } from '@/utils/profileMappers';
 export default function EditResume(){
   const { resumeId } = useParams();
   const navigate = useNavigate();
@@ -20,8 +24,6 @@ export default function EditResume(){
   const deleteCv = useCvFiles().deleteCv;
   const updateProfile = useCvStore(s => s.updateProfile);
   const [editingTitle, setEditingTitle] = useState(false);
-  const [step, setStep] = useState(0);
-  const steps = ['Profil', 'Contact', 'Expériences', 'Éducation', 'Compétences', 'Projets', 'Langues'];
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -29,9 +31,6 @@ export default function EditResume(){
       loadCvFromFile(resumeId);
     }
   }, [resumeId, loadCvFromFile]);
-
-  const goNext = () => setStep(s => Math.min(s + 1, steps.length - 1));
-  const goBack = () => setStep(s => Math.max(s - 1, 0));
 
   async function handleSave(exit?: boolean) {
     await saveCvToFile();
@@ -44,72 +43,74 @@ export default function EditResume(){
       navigate('/dashboard');
     }
   }
-
-  function renderStep() {
-    switch(step) {
-      case 0: return <PersonalBasicsStep onNext={goNext} />;
-      case 1: return <ContactInfoStep onNext={goNext} onBack={goBack} />;
-      case 2: return <ExperiencesStep onNext={goNext} onBack={goBack} />;
-      case 3: return <EducationStep onNext={goNext} onBack={goBack} />;
-      case 4: return <SkillsStep onNext={goNext} onBack={goBack} />;
-      case 5: return <ProjectsStep onNext={goNext} onBack={goBack} />;
-      case 6: return <LanguagesStep onNext={() => { /* last step */ }} onBack={goBack} />;
-      default: return null;
-    }
-  }
   return (
-    <DashboardLayout activeMenu="home">
-      <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
-        <header className="flex flex-col gap-4">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              {editingTitle ? (
-                <input
-                  autoFocus
-                  className="text-2xl font-semibold border-b border-indigo-400 focus:outline-none px-1"
-                  value={profile?.title || ''}
-                  onChange={(e) => updateProfile({ title: e.target.value })}
-                  onBlur={() => setEditingTitle(false)}
-                />
+    <DashboardLayout   className="w-full " activeMenu="home">
+      <div className="w-full   ">
+        <header className="flex items-center justify-between ">
+          <div className="flex items-center gap-3">
+          </div>
+          <div className="flex items-center gap-3">
+            <button className="p-2 rounded hover:bg-slate-100" title="Changer de template" aria-label="Template"><FiLayout /></button>
+            <button onClick={() => handleSave(false)} className="p-2 rounded hover:bg-slate-100 text-green-600" title="Sauvegarder" aria-label="Sauvegarder"><FiSave /></button>
+            <button onClick={handleDelete} className="p-2 rounded hover:bg-slate-100 text-red-600" title="Supprimer" aria-label="Supprimer"><FiTrash2 /></button>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex justify-center ">
+          {/* Colonne Formulaire - Défiler avec la page */}
+          <div className="space-y-2 font-sans">
+            <FormSection title="Informations Personnelles" defaultOpen>
+              <PersonalBasicsStep onNext={() => {}} />
+            </FormSection>
+            
+            <FormSection title="Contact">
+              <ContactInfoStep onNext={() => {}} onBack={() => {}} />
+            </FormSection>
+            
+            <FormSection title="Expériences">
+              <ExperiencesStep onNext={() => {}} onBack={() => {}} />
+            </FormSection>
+            
+            <FormSection title="Formation">
+              <EducationStep onNext={() => {}} onBack={() => {}} />
+            </FormSection>
+            
+            <FormSection title="Compétences">
+              <SkillsStep onNext={() => {}} onBack={() => {}} />
+            </FormSection>
+            
+            <FormSection title="Projets">
+              <ProjectsStep onNext={() => {}} onBack={() => {}} />
+            </FormSection>
+            
+            <FormSection title="Langues">
+              <LanguagesStep onNext={() => {}} onBack={() => {}} />
+            </FormSection>
+          </div>
+
+          {/* Colonne Chat - Sticky avec hauteur fixe */}
+          <div className="md:sticky md:top-4 h-[calc(100vh-200px)] flex flex-col bg-white border rounded-lg shadow overflow-hidden">
+            
+            <div className="flex-1 overflow-hidden">
+              <ChatAssistant />
+            </div>
+          </div>
+
+          {/* Colonne Preview - Sticky */}
+          <div className="md:sticky md:top-4 h-[calc(100vh-200px)] flex flex-col flex justify-center items-center  overflow-hidden">
+            <div className="flex-1 overflow-y-auto">
+              {profile ? (
+                <div className="transform scale-[0.45] origin-top">
+                  <TemplateOne templateId="template1" resumeData={mapProfileToResumeData(profile)} template="template1" />
+                </div>
               ) : (
-                <h1 className="text-2xl font-semibold flex items-center gap-2">
-                  {profile?.title || 'Titre du CV'}
-                  <button onClick={() => setEditingTitle(true)} className="text-indigo-500 hover:text-indigo-600" aria-label="Modifier le titre">
-                    <FiEdit2 />
-                  </button>
-                </h1>
+                <div className="p-8 text-center text-slate-400">
+                  Chargement de l'aperçu...
+                </div>
               )}
             </div>
-            <div className="flex items-center gap-3">
-              <button className="p-2 rounded hover:bg-slate-100" title="Changer de template" aria-label="Template"><FiLayout /></button>
-              <button onClick={() => handleSave(false)} className="p-2 rounded hover:bg-slate-100 text-green-600" title="Sauvegarder" aria-label="Sauvegarder"><FiSave /></button>
-              <button onClick={handleDelete} className="p-2 rounded hover:bg-slate-100 text-red-600" title="Supprimer" aria-label="Supprimer"><FiTrash2 /></button>
-            </div>
           </div>
-          <nav className="flex flex-wrap gap-2 text-sm">
-            {steps.map((label, i) => (
-              <button
-                key={label}
-                onClick={() => setStep(i)}
-                className={`px-3 py-1 rounded border ${i === step ? 'bg-indigo-600 text-white border-indigo-600' : 'hover:bg-slate-100'}`}
-              >
-                {i + 1}. {label}
-              </button>
-            ))}
-          </nav>
-        </header>
-        <section className="bg-white border rounded-md shadow p-6">
-          {renderStep()}
-        </section>
-        <footer className="flex items-center justify-between pt-2">
-          <div className="flex gap-2">
-            <button onClick={() => navigate('/dashboard')} className="px-4 py-2 border rounded">Retour Dashboard</button>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => handleSave(true)} className="px-4 py-2 border rounded">Save & Exit</button>
-            {step < steps.length -1 && <button onClick={goNext} className="px-4 py-2 bg-indigo-600 text-white rounded">Next</button>}
-          </div>
-        </footer>
+        </div>
       </div>
     </DashboardLayout>
   );
