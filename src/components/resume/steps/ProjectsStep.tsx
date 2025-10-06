@@ -10,7 +10,6 @@ const ProjectsStep: React.FC<Props> = ({ onNext, onBack }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="font-medium">Projets</h3>
         <button onClick={addProject} className="text-sm text-indigo-600">+ Ajouter</button>
       </div>
       <div className="space-y-4">

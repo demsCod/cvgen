@@ -16,7 +16,7 @@ export default function FormSection({ title, children, defaultOpen = false }: Fo
         onClick={() => setIsOpen(!isOpen)}
         className="w-full p-4 flex items-center justify-between hover:bg-slate-50"
       >
-        <h3 className="text-lg font-medium">{title}</h3>
+        <h3 className="text-sm font-medium">{title}</h3>
         <FiChevronDown
           className={`transform transition-transform ${
             isOpen ? 'rotate-180' : ''

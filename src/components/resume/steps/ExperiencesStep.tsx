@@ -10,7 +10,6 @@ const ExperiencesStep: React.FC<Props> = ({ onNext, onBack }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="font-medium">Expériences</h3>
         <button onClick={addExperience} className="text-sm text-indigo-600">+ Ajouter</button>
       </div>
       <div className="space-y-4">

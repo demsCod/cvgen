@@ -86,7 +86,7 @@ export default function ChatAssistant() {
           <button
             onClick={handleSend}
             disabled={!input.trim()}
-            className="p-2 text-white bg-indigo-600 rounded-full hover:bg-indigo-700 disabled:opacity-50"
+            className="p-2 text-indigo-600 rounded-full cursor-pointer hover:bg-indigo-700 hover:text-white disabled:opacity-50"
           >
             <FiSend />
           </button>

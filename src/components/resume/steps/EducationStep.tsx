@@ -10,13 +10,12 @@ const EducationStep: React.FC<Props> = ({ onNext, onBack }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="font-medium">Éducation</h3>
         <button onClick={addEducation} className="text-sm text-indigo-600">+ Ajouter</button>
       </div>
       <div className="space-y-4">
         {profile.education.map((ed, idx) => (
           <div key={idx} className="border rounded p-4 space-y-3">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <input placeholder="Diplôme" className="border rounded px-3 py-2" value={ed.degree || ''} onChange={e => {
                 const education = [...profile.education];
                 education[idx] = { ...education[idx], degree: e.target.value };

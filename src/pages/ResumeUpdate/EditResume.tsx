@@ -44,9 +44,9 @@ export default function EditResume(){
     }
   }
   return (
-    <DashboardLayout   className="w-full " activeMenu="home">
-      <div className="w-full   ">
-        <header className="flex items-center justify-between ">
+    <DashboardLayout   className="w-full  mx-auto flex justify-center" activeMenu="home">
+      <div className="w-full  ">
+        <header className="flex items-center justify-between pb-4">
           <div className="flex items-center gap-3">
           </div>
           <div className="flex items-center gap-3">
@@ -100,7 +100,7 @@ export default function EditResume(){
           <div className="md:sticky md:top-4 h-[calc(100vh-200px)] flex flex-col flex justify-center items-center  overflow-hidden">
             <div className="flex-1 overflow-y-auto">
               {profile ? (
-                <div className="transform scale-[0.45] origin-top">
+                <div className="transform scale-[0.50] origin-top">
                   <TemplateOne templateId="template1" resumeData={mapProfileToResumeData(profile)} template="template1" />
                 </div>
               ) : (
