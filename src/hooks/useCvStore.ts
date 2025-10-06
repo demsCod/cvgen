@@ -24,6 +24,17 @@ interface CvState {
   loadCvFromFile: (id: string) => Promise<void>;
   saveCvToFile: () => Promise<boolean>;
   ensureInitialized: () => Promise<void>;
+  updateProfile: (patch: Partial<CandidateProfile>) => void;
+  addExperience: () => void;
+  removeExperience: (id: string) => void;
+  addEducation: () => void;
+  removeEducation: (index: number) => void;
+  addProject: () => void;
+  removeProject: (id: string) => void;
+  addSkill: () => void;
+  removeSkill: (id: string) => void;
+  addLanguage: () => void;
+  removeLanguage: (id: string) => void;
 }
 
 export const useCvStore = create<CvState>((set, get) => ({
@@ -69,10 +80,10 @@ export const useCvStore = create<CvState>((set, get) => ({
       phone: data.phone,
       summary: data.summary,
       experiences: data.experiences || [],
-      skills: data.skills || [],
+      skills: Array.isArray(data.skills) ? data.skills.map((s: any) => typeof s === 'string' ? { name: s } : s) : [],
       education: data.education || [],
       projects: data.projects || [],
-      languages: data.languages || [],
+      languages: Array.isArray(data.languages) ? data.languages.map((l: any) => typeof l === 'string' ? { name: l } : l) : [],
     };
     set({ profile, currentCvId: id, error: undefined });
   },
@@ -99,6 +110,17 @@ export const useCvStore = create<CvState>((set, get) => ({
       set({ initialized: true });
     }
   },
+  updateProfile: (patch) => set(state => state.profile ? { profile: { ...state.profile, ...patch } } : {}),
+  addExperience: () => set(state => ({ profile: state.profile ? { ...state.profile, experiences: [...state.profile.experiences, { id: genId(), role: 'Intitulé du poste', company: 'Entreprise', start: '', end: '', description: '' }] } : state.profile })),
+  removeExperience: (id) => set(state => ({ profile: state.profile ? { ...state.profile, experiences: state.profile.experiences.filter(e => e.id !== id) } : state.profile })),
+  addEducation: () => set(state => ({ profile: state.profile ? { ...state.profile, education: [...state.profile.education, { degree: 'Diplôme', school: 'Établissement', start: '', end: '' }] } : state.profile })),
+  removeEducation: (index) => set(state => ({ profile: state.profile ? { ...state.profile, education: state.profile.education.filter((_, i) => i !== index) } : state.profile })),
+  addProject: () => set(state => ({ profile: state.profile ? { ...state.profile, projects: [...state.profile.projects, { id: genId(), name: 'Projet', description: '', tech: [] }] } : state.profile })),
+  removeProject: (id) => set(state => ({ profile: state.profile ? { ...state.profile, projects: state.profile.projects.filter(p => p.id !== id) } : state.profile })),
+  addSkill: () => set(state => ({ profile: state.profile ? { ...state.profile, skills: [...state.profile.skills, { id: genId(), name: 'Compétence' }] } : state.profile })),
+  removeSkill: (id) => set(state => ({ profile: state.profile ? { ...state.profile, skills: state.profile.skills.filter(s => s.id !== id) } : state.profile })),
+  addLanguage: () => set(state => ({ profile: state.profile ? { ...state.profile, languages: [...state.profile.languages, { id: genId(), name: 'Langue' }] } : state.profile })),
+  removeLanguage: (id) => set(state => ({ profile: state.profile ? { ...state.profile, languages: state.profile.languages.filter(l => l.id !== id) } : state.profile })),
 }));
 
 function createBlankProfile(options?: { fullName?: string; title?: string }): CandidateProfile {
@@ -115,4 +137,8 @@ function createBlankProfile(options?: { fullName?: string; title?: string }): Ca
     projects: [],
     languages: [],
   };
+}
+
+function genId() {
+  return Math.random().toString(36).slice(2, 10);
 }

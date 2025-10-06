@@ -1,52 +1,116 @@
-import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import DashboardLayout from '@/components/layouts/DashboardLayout';
 import { useCvStore } from '../../hooks/useCvStore';
-import { Card, CardHeader, CardSection } from '../../components/ui/Card';
-import { TextArea } from '../../components/ui/TextArea';
-import { Button } from '../../components/ui/Button';
-import { Spinner } from '../../components/ui/Spinner';
-import { StageIndicator } from '../../components/StageIndicator';
-
+import PersonalBasicsStep from '@/components/resume/steps/PersonalBasicsStep';
+import ContactInfoStep from '@/components/resume/steps/ContactInfoStep';
+import ExperiencesStep from '@/components/resume/steps/ExperiencesStep';
+import EducationStep from '@/components/resume/steps/EducationStep';
+import SkillsStep from '@/components/resume/steps/SkillsStep';
+import ProjectsStep from '@/components/resume/steps/ProjectsStep';
+import LanguagesStep from '@/components/resume/steps/LanguagesStep';
+import { FiEdit2, FiSave, FiTrash2, FiLayout } from 'react-icons/fi';
+import { useCvFiles } from '@/hooks/useCvFiles';
 export default function EditResume(){
   const { resumeId } = useParams();
-  const loadCvFromFile = useCvStore(s => s.loadCvFromFile);
+  const navigate = useNavigate();
   const profile = useCvStore(s => s.profile);
-  const [analyzing, setAnalyzing] = React.useState(false);
+  const loadCvFromFile = useCvStore(s => s.loadCvFromFile);
+  const saveCvToFile = useCvStore(s => s.saveCvToFile);
+  const deleteCv = useCvFiles().deleteCv;
+  const updateProfile = useCvStore(s => s.updateProfile);
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [step, setStep] = useState(0);
+  const steps = ['Profil', 'Contact', 'Expériences', 'Éducation', 'Compétences', 'Projets', 'Langues'];
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (resumeId) {
       loadCvFromFile(resumeId);
     }
-  }, [resumeId]);
+  }, [resumeId, loadCvFromFile]);
+
+  const goNext = () => setStep(s => Math.min(s + 1, steps.length - 1));
+  const goBack = () => setStep(s => Math.max(s - 1, 0));
+
+  async function handleSave(exit?: boolean) {
+    await saveCvToFile();
+    if (exit) navigate('/dashboard');
+  }
+
+  async function handleDelete() {
+    if (resumeId && confirm('Supprimer ce CV ?')) {
+      await deleteCv(resumeId);
+      navigate('/dashboard');
+    }
+  }
+
+  function renderStep() {
+    switch(step) {
+      case 0: return <PersonalBasicsStep onNext={goNext} />;
+      case 1: return <ContactInfoStep onNext={goNext} onBack={goBack} />;
+      case 2: return <ExperiencesStep onNext={goNext} onBack={goBack} />;
+      case 3: return <EducationStep onNext={goNext} onBack={goBack} />;
+      case 4: return <SkillsStep onNext={goNext} onBack={goBack} />;
+      case 5: return <ProjectsStep onNext={goNext} onBack={goBack} />;
+      case 6: return <LanguagesStep onNext={() => { /* last step */ }} onBack={goBack} />;
+      default: return null;
+    }
+  }
   return (
-    <div className="space-y-10">
-      <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Adaptation</h1>
-          <p className="mt-1 text-sm text-slate-600">Collez votre CV et l’offre pour générer des suggestions ciblées.</p>
-        </div>
-        <StageIndicator />
-      </header>
-      <div className="grid gap-8 lg:grid-cols-2">
-        <Card className="flex flex-col">
-          <CardHeader title="CV" description={profile?.fullName || 'Collez le contenu brut de votre CV'} />
-          <CardSection>
-            <TextArea placeholder="Expériences, compétences..." hint="Pas de mise en forme nécessaire." />
-          </CardSection>
-        </Card>
-        <Card className="flex flex-col">
-          <CardHeader title="Offre" description="Collez l’offre ou un extrait" />
-          <CardSection>
-            <TextArea placeholder="Missions, profil recherché..." />
-          </CardSection>
-        </Card>
+    <DashboardLayout activeMenu="home">
+      <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
+        <header className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              {editingTitle ? (
+                <input
+                  autoFocus
+                  className="text-2xl font-semibold border-b border-indigo-400 focus:outline-none px-1"
+                  value={profile?.title || ''}
+                  onChange={(e) => updateProfile({ title: e.target.value })}
+                  onBlur={() => setEditingTitle(false)}
+                />
+              ) : (
+                <h1 className="text-2xl font-semibold flex items-center gap-2">
+                  {profile?.title || 'Titre du CV'}
+                  <button onClick={() => setEditingTitle(true)} className="text-indigo-500 hover:text-indigo-600" aria-label="Modifier le titre">
+                    <FiEdit2 />
+                  </button>
+                </h1>
+              )}
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="p-2 rounded hover:bg-slate-100" title="Changer de template" aria-label="Template"><FiLayout /></button>
+              <button onClick={() => handleSave(false)} className="p-2 rounded hover:bg-slate-100 text-green-600" title="Sauvegarder" aria-label="Sauvegarder"><FiSave /></button>
+              <button onClick={handleDelete} className="p-2 rounded hover:bg-slate-100 text-red-600" title="Supprimer" aria-label="Supprimer"><FiTrash2 /></button>
+            </div>
+          </div>
+          <nav className="flex flex-wrap gap-2 text-sm">
+            {steps.map((label, i) => (
+              <button
+                key={label}
+                onClick={() => setStep(i)}
+                className={`px-3 py-1 rounded border ${i === step ? 'bg-indigo-600 text-white border-indigo-600' : 'hover:bg-slate-100'}`}
+              >
+                {i + 1}. {label}
+              </button>
+            ))}
+          </nav>
+        </header>
+        <section className="bg-white border rounded-md shadow p-6">
+          {renderStep()}
+        </section>
+        <footer className="flex items-center justify-between pt-2">
+          <div className="flex gap-2">
+            <button onClick={() => navigate('/dashboard')} className="px-4 py-2 border rounded">Retour Dashboard</button>
+          </div>
+          <div className="flex gap-2">
+            <button onClick={() => handleSave(true)} className="px-4 py-2 border rounded">Save & Exit</button>
+            {step < steps.length -1 && <button onClick={goNext} className="px-4 py-2 bg-indigo-600 text-white rounded">Next</button>}
+          </div>
+        </footer>
       </div>
-      <div className="flex items-center gap-4">
-        <Button onClick={()=>{setAnalyzing(true); setTimeout(()=>setAnalyzing(false),1500);}} disabled={analyzing}>
-          {analyzing ? <><Spinner size={16} className="text-white" /> Analyse...</> : 'Analyser'}
-        </Button>
-        <Button variant="secondary" disabled={!analyzing}>Adapter</Button>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }
