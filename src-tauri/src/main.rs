@@ -6,6 +6,7 @@ mod file_import;
 mod models;
 mod python_bridge;
 mod state;
+mod commands { pub mod fs; }
 
 use std::fs;
 
@@ -36,7 +37,12 @@ fn main() {
             register_offer,
             analyze_offer,
             adapt_documents,
-            export_documents
+            export_documents,
+            commands::fs::save_cv,
+            commands::fs::load_cv,
+            commands::fs::list_cvs,
+            commands::fs::list_cvs_meta,
+            commands::fs::delete_cv
         ])
         .build(tauri::generate_context!())
         .expect("Échec de l'initialisation Tauri");

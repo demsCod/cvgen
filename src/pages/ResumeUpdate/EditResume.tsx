@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useCvStore } from '../../hooks/useCvStore';
 import { Card, CardHeader, CardSection } from '../../components/ui/Card';
 import { TextArea } from '../../components/ui/TextArea';
 import { Button } from '../../components/ui/Button';
@@ -6,7 +8,16 @@ import { Spinner } from '../../components/ui/Spinner';
 import { StageIndicator } from '../../components/StageIndicator';
 
 export default function EditResume(){
+  const { resumeId } = useParams();
+  const loadCvFromFile = useCvStore(s => s.loadCvFromFile);
+  const profile = useCvStore(s => s.profile);
   const [analyzing, setAnalyzing] = React.useState(false);
+
+  useEffect(() => {
+    if (resumeId) {
+      loadCvFromFile(resumeId);
+    }
+  }, [resumeId]);
   return (
     <div className="space-y-10">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -18,7 +29,7 @@ export default function EditResume(){
       </header>
       <div className="grid gap-8 lg:grid-cols-2">
         <Card className="flex flex-col">
-          <CardHeader title="CV" description="Collez le contenu brut de votre CV" />
+          <CardHeader title="CV" description={profile?.fullName || 'Collez le contenu brut de votre CV'} />
           <CardSection>
             <TextArea placeholder="Expériences, compétences..." hint="Pas de mise en forme nécessaire." />
           </CardSection>

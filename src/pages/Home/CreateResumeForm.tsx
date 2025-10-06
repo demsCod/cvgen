@@ -1,11 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCvStore } from '../../hooks/useCvStore';
+import { useCvFiles } from '../../hooks/useCvFiles';
 
 const CreateResumeForm = () => {
     const [title, setTitle] = useState('');
     const [error , setError] = useState<string | null>(null);
-
     const navigate = useNavigate();
+    const setProfile = useCvStore(s => s.setProfile);
+    const saveCvToFile = useCvStore(s => s.saveCvToFile);
+    const setStage = useCvStore(s => s.setStage);
+    const setErrorStore = useCvStore(s => s.setError);
+    const currentCvId = useCvStore(s => s.currentCvId);
+    const { saveCv } = useCvFiles();
 
 
     const handleCreateResume = async (e: React.FormEvent) => {
@@ -15,10 +22,21 @@ const CreateResumeForm = () => {
             return;
         }
         try {
-            // Simulate API call to create resume
-            const newResumeId = 'newly-created-resume-id'; // Replace with actual ID from API response
-            navigate(`/resume/${newResumeId}`);
+            const id = `cv_${Date.now()}`;
+            const profile = {
+              id,
+              fullName: title,
+              summary: 'Résumé à compléter',
+              experiences: [],
+              skills: [],
+              education: [],
+              projects: [],
+              languages: []
+            };
+            await saveCv(id, profile as any);
+            navigate(`/resume/${id}`);
         } catch (err) {
+            console.error(err);
             setError('Une erreur est survenue lors de la création du CV. Veuillez réessayer.');
         }
     };

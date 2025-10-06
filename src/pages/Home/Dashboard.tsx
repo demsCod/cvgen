@@ -3,7 +3,8 @@ import DashboardLayout from '../../components/layouts/DashboardLayout';
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import ResumeSummaryCard from '../../components/Cards/ResumeSummaryCard';
-import { fetchMockResumes, ResumeSummary } from '../../lib/mock/resumes';
+import { useCvFiles } from '../../hooks/useCvFiles';
+import { useCvStore } from '../../hooks/useCvStore';
 import Modal from '../../components/Modal';
 import CreateResumeForm from './CreateResumeForm';
 
@@ -12,14 +13,16 @@ export default function Dashboard(){
   const navigate = useNavigate();
 
   const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [allResumes, setAllResumes] = useState<ResumeSummary[] | null>(null);
+  const [allResumes, setAllResumes] = useState<{ id: string; title: string; updatedAt: string }[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const { listCvsMeta } = useCvFiles();
+  const loadCvFromFile = useCvStore(s => s.loadCvFromFile);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
       try {
-        const data = await fetchMockResumes();
+        const data = await listCvsMeta();
         if (mounted) setAllResumes(data);
       } finally {
         if (mounted) setLoading(false);
@@ -60,11 +63,13 @@ export default function Dashboard(){
         {!loading && allResumes && allResumes.map((resume) => (
           <ResumeSummaryCard
             key={resume.id}
-            imgUrl={resume.thumbnailLink || null}
+            imgUrl={null}
             title={resume.title}
             lastUpdate={resume.updatedAt ? moment(resume.updatedAt).format('DD/MM/YYYY') : 'Jamais'}
-            onSelect={() => navigate(`/resume/${resume.id}`)}
-
+            onSelect={async () => {
+              await loadCvFromFile(resume.id);
+              navigate(`/resume/${resume.id}`);
+            }}
           />
         ))}
       </div>
