@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import ResumeSummaryCard from '../../components/Cards/ResumeSummaryCard';
 import { fetchMockResumes, ResumeSummary } from '../../lib/mock/resumes';
+import Modal from '../../components/Modal';
+import CreateResumeForm from './CreateResumeForm';
 
 
 export default function Dashboard(){
@@ -61,11 +63,16 @@ export default function Dashboard(){
             imgUrl={resume.thumbnailLink || null}
             title={resume.title}
             lastUpdate={resume.updatedAt ? moment(resume.updatedAt).format('DD/MM/YYYY') : 'Jamais'}
-            onClick={() => navigate(`/resume/${resume.id}`)}
+            onSelect={() => navigate(`/resume/${resume.id}`)}
 
           />
         ))}
       </div>
+        <Modal isOpen={openCreateModal} onClose={() => setOpenCreateModal(false)} hideHeader>
+          <div className="p-4">
+            <CreateResumeForm />
+          </div>
+        </Modal>
     </DashboardLayout>
   );
 }
