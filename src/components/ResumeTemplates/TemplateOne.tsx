@@ -177,7 +177,7 @@ const TemplateOne = ({
                 <span key={skill.id}>
                   {skill.name}
                   {skill.level && ` (${skill.level})`}
-                  {index < resumeData.skills.length - 1 && ", "}
+                  {index < (resumeData.skills?.length ?? 0) - 1 && ", "}
                 </span>
               ))}
             </div>
@@ -206,7 +206,7 @@ const TemplateOne = ({
                 <span key={lang.id}>
                   {lang.name}
                   {lang.proficiency && ` (${lang.proficiency})`}
-                  {index < resumeData.languages.length - 1 && ", "}
+                  {index < (resumeData.languages?.length ?? 0) - 1 && ", "}
                 </span>
               ))}
             </div>

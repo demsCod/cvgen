@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useCvStore } from '../../hooks/useCvStore';
 import { useCvFiles } from '../../hooks/useCvFiles';
 
-const CreateResumeForm = () => {
+interface Props {
+    onSuccess?: () => void;
+}
+
+const CreateResumeForm = ({ onSuccess }: Props) => {
     const [title, setTitle] = useState('');
     const [error , setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -34,6 +38,7 @@ const CreateResumeForm = () => {
               languages: []
             };
             await saveCv(id, profile as any);
+            onSuccess?.();
             navigate(`/resume/${id}`);
         } catch (err) {
             console.error(err);

@@ -11,12 +11,12 @@ export default function FormSection({ title, children, defaultOpen = false }: Fo
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="bg-white border rounded-lg overflow-hidden">
+    <div className="bg-white border rounded-lg overflow-hidden shadow-sm">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-4 flex items-center justify-between hover:bg-slate-50"
+        className="w-full p-4 lg:p-5 flex items-center justify-between hover:bg-slate-50"
       >
-        <h3 className="text-sm font-medium">{title}</h3>
+        <h3 className="text-sm lg:text-base font-medium">{title}</h3>
         <FiChevronDown
           className={`transform transition-transform ${
             isOpen ? 'rotate-180' : ''
@@ -28,7 +28,7 @@ export default function FormSection({ title, children, defaultOpen = false }: Fo
           isOpen ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'
         } overflow-hidden`}
       >
-        <div className="p-4 border-t">{children}</div>
+        <div className="p-4 lg:p-6 border-t">{children}</div>
       </div>
     </div>
   );

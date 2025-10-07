@@ -102,10 +102,10 @@ pub fn list_cvs_meta() -> Result<Value, String> {
     }
     // sort by updated desc
     list.sort_by(|a,b| b.1.cmp(&a.1));
-    let arr: Vec<Value> = list.into_iter().map(|(id, updatedAt, title)| {
+    let arr: Vec<Value> = list.into_iter().map(|(id, updated_at, title)| {
         let mut m = serde_json::Map::new();
         m.insert("id".into(), Value::String(id));
-        m.insert("updatedAt".into(), Value::String(updatedAt));
+        m.insert("updatedAt".into(), Value::String(updated_at));
         m.insert("title".into(), Value::String(title));
         Value::Object(m)
     }).collect();
